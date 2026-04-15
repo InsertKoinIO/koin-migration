@@ -1,0 +1,22 @@
+{
+  "name": "koin-migration",
+  "version": "1.0.0",
+  "description": "Automate Dependency Injection (DI) framework migration to Koin 4.x with the Koin Compiler Plugin. Supports Hilt, Dagger, Toothpick, Kodein, Koin DSL upgrades, and KSP-to-Compiler-Plugin migration.",
+  "author": {
+    "name": "Kotzilla"
+  },
+  "homepage": "https://github.com/InsertKoinIO/koin-migration",
+  "repository": "https://github.com/InsertKoinIO/koin-migration",
+  "license": "Apache-2.0",
+  "keywords": [
+    "koin",
+    "dependency-injection",
+    "kotlin",
+    "android",
+    "kmp",
+    "migration",
+    "hilt",
+    "dagger",
+    "kodein"
+  ]
+}
