@@ -12,34 +12,22 @@ This repository is two things in one:
 - **Reference documentation** — per-framework migration guides under [`skills/di-migration/references/`](./skills/di-migration/references) covering Hilt, Dagger, Toothpick, Kodein, and Koin DSL / KSP upgrades
 - **Claude Code plugin** — the same content packaged as an AI skill (`koin-migration`) that Claude can use to automate migrations directly in your codebase
 
-## Supported Migration Paths
-
-| Source | Target |
-|--------|--------|
-| Hilt (+ Dagger) | Koin 4.x + Compiler Plugin (annotations) |
-| Dagger 2 (no Hilt) | Koin 4.x + Compiler Plugin (annotations) |
-| Toothpick | Koin 4.x + Compiler Plugin (annotations) |
-| Kodein | Koin 4.x + Compiler Plugin (Safe DSL) |
-| Koin 3.x | Koin 4.x Safe DSL + Compiler Plugin |
-| Koin DSL | Koin 4.x Safe DSL + Compiler Plugin |
-| Koin KSP Annotations | Koin 4.x Annotations + Compiler Plugin |
-
-> For **greenfield projects** or **manual DI / service locator** code, there's
-> nothing to migrate *from* — use Koin directly per the official docs at
-> [insert-koin.io](https://insert-koin.io) and apply the same Safe DSL + Compiler
-> Plugin conventions this skill uses.
-
 ## Installation
 
-### From the Anthropic Plugin Directory (recommended)
+### From Claude Code (recommended)
 
-Search for **`koin-migration`** in the Claude Code plugin manager:
-- https://claude.ai/settings/plugins
-- https://platform.claude.com/plugins
+In a Claude Code session, run:
 
-Updates are automatic when new versions are published.
+```
+/plugin marketplace add InsertKoinIO/koin-migration
+/plugin install koin-migration@koin-migration
+```
 
-### From GitHub (manual)
+The first command registers this repo as a plugin marketplace; the second
+installs the `koin-migration` plugin from it. Updates: re-run
+`/plugin install koin-migration@koin-migration` after a new release.
+
+### Manual install
 
 ```bash
 git clone https://github.com/InsertKoinIO/koin-migration.git
@@ -64,6 +52,23 @@ cp -r koin-migration/skills/di-migration/* ~/.claude/skills/di-migration/
 ```
 
 Update with `git pull`.
+
+## Supported Migration Paths
+
+| Source | Target |
+|--------|--------|
+| Hilt (+ Dagger) | Koin 4.x + Compiler Plugin (annotations) |
+| Dagger 2 (no Hilt) | Koin 4.x + Compiler Plugin (annotations) |
+| Toothpick | Koin 4.x + Compiler Plugin (annotations) |
+| Kodein | Koin 4.x + Compiler Plugin (Safe DSL) |
+| Koin 3.x | Koin 4.x Safe DSL + Compiler Plugin |
+| Koin DSL | Koin 4.x Safe DSL + Compiler Plugin |
+| Koin KSP Annotations | Koin 4.x Annotations + Compiler Plugin |
+
+> For **greenfield projects** or **manual DI / service locator** code, there's
+> nothing to migrate *from* — use Koin directly per the official docs at
+> [insert-koin.io](https://insert-koin.io) and apply the same Safe DSL + Compiler
+> Plugin conventions this skill uses.
 
 ## Usage
 
@@ -120,7 +125,9 @@ Issues and pull requests are welcome.
 ## Repository Layout
 
 ```
-.claude-plugin/plugin.json          # plugin manifest
+.claude-plugin/
+  plugin.json                       # plugin manifest (name, version, metadata)
+  marketplace.json                  # makes this repo installable via /plugin marketplace add
 skills/di-migration/
   SKILL.md                          # skill entry point
   references/*.md                   # per-path migration guides

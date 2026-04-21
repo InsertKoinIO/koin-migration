@@ -6,15 +6,25 @@ skill itself.
 
 ## Source of truth
 
-**Edit only `skills/di-migration/`.** Specifically:
+Skill content lives under **`skills/di-migration/`**:
 
 - `skills/di-migration/SKILL.md`
 - `skills/di-migration/references/*.md`
 - `skills/di-migration/evals/evals.json`
 
-There are **no root-level mirrors** of these files — the `.skill` bundle is zipped
-directly from `skills/di-migration/` into a flat layout. If you see a stray
-`SKILL.md` or `references/` at the repo root, it's accidental — delete it.
+Plugin manifests live under **`.claude-plugin/`**:
+
+- `plugin.json` — plugin metadata (name, version, description) used by the
+  installed plugin
+- `marketplace.json` — makes the repo installable via
+  `/plugin marketplace add InsertKoinIO/koin-migration` followed by
+  `/plugin install koin-migration@koin-migration`. The marketplace `name`
+  becomes the `@marketplace` suffix; each `plugins[].name` must match the
+  corresponding `plugin.json` `name`.
+
+There are **no root-level mirrors** of the skill files — the `.skill` bundle is
+zipped directly from `skills/di-migration/` into a flat layout. If you see a
+stray `SKILL.md` or `references/` at the repo root, it's accidental — delete it.
 
 ## After any content change
 
@@ -22,8 +32,9 @@ directly from `skills/di-migration/` into a flat layout. If you see a stray
 ./build.sh
 ```
 
-This syncs source → root, validates `.claude-plugin/plugin.json`, and rebuilds
-both `di-migration-skill.skill` and `koin-migration-plugin.zip`. Both are
+This validates `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`
+(including that the plugin name is consistent across both), then rebuilds
+`di-migration-skill.skill` and `koin-migration-plugin.zip`. Both artifacts are
 git-ignored — do not commit them.
 
 ## Adding a new migration path
@@ -38,6 +49,11 @@ git-ignored — do not commit them.
 3. Add at least one eval case in `skills/di-migration/evals/evals.json`
 4. Run `./build.sh`
 5. Bump `version` in `.claude-plugin/plugin.json` (MINOR) and add a `CHANGELOG.md` entry
+
+> Note: adding a new migration path **does not** require touching
+> `.claude-plugin/marketplace.json` — that file describes the plugin package,
+> not its individual skills. Only update `marketplace.json` if the plugin name
+> or repo layout changes.
 
 ## Releasing
 

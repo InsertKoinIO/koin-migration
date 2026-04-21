@@ -8,13 +8,31 @@ PLUGIN_OUT="$ROOT/koin-migration-plugin.zip"
 
 # --- validate sources -------------------------------------------------------
 
-[[ -f "$SRC/SKILL.md" ]]                  || { echo "error: $SRC/SKILL.md not found" >&2; exit 1; }
-[[ -f "$ROOT/.claude-plugin/plugin.json" ]] || { echo "error: .claude-plugin/plugin.json missing" >&2; exit 1; }
-[[ -f "$ROOT/LICENSE" ]]                  || { echo "error: LICENSE missing" >&2; exit 1; }
-[[ -f "$ROOT/README.md" ]]                || { echo "error: README.md missing" >&2; exit 1; }
+[[ -f "$SRC/SKILL.md" ]]                       || { echo "error: $SRC/SKILL.md not found" >&2; exit 1; }
+[[ -f "$ROOT/.claude-plugin/plugin.json" ]]      || { echo "error: .claude-plugin/plugin.json missing" >&2; exit 1; }
+[[ -f "$ROOT/.claude-plugin/marketplace.json" ]] || { echo "error: .claude-plugin/marketplace.json missing" >&2; exit 1; }
+[[ -f "$ROOT/LICENSE" ]]                       || { echo "error: LICENSE missing" >&2; exit 1; }
+[[ -f "$ROOT/README.md" ]]                     || { echo "error: README.md missing" >&2; exit 1; }
 
 # basic plugin.json sanity check
 python3 -c "import json,sys; m=json.load(open('$ROOT/.claude-plugin/plugin.json')); [sys.exit(f'plugin.json missing field: {f}') for f in ('name','version','description','license','repository') if f not in m]"
+
+# marketplace.json sanity + consistency with plugin.json
+python3 -c "
+import json, sys
+plug = json.load(open('$ROOT/.claude-plugin/plugin.json'))
+mkt  = json.load(open('$ROOT/.claude-plugin/marketplace.json'))
+for f in ('name', 'owner', 'plugins'):
+    if f not in mkt: sys.exit(f'marketplace.json missing field: {f}')
+if not isinstance(mkt['plugins'], list) or not mkt['plugins']:
+    sys.exit('marketplace.json: plugins[] must be a non-empty array')
+names = [p.get('name') for p in mkt['plugins']]
+if plug['name'] not in names:
+    sys.exit(f\"marketplace.json: no plugin entry matches plugin.json name '{plug['name']}' (found {names})\")
+for p in mkt['plugins']:
+    if 'source' not in p:
+        sys.exit(f\"marketplace.json: plugin {p.get('name')!r} missing 'source'\")
+"
 
 # --- build .skill bundle (portable single-skill archive, flat layout) ------
 
